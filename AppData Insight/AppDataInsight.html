@@ -1,0 +1,782 @@
+<!DOCTYPE html>
+<html lang="pl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AppData Insight - Kontrola i analiza danych</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <style>
+        :root {
+            --primary: #0a2463;
+            --secondary: #247ba0;
+            --accent: #00b2ca;
+            --light: #f5f5f5;
+            --dark: #1a1a2e;
+            --transition: all 0.3s ease;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+
+        body {
+            background-color: var(--light);
+            color: var(--dark);
+            line-height: 1.6;
+        }
+
+        /* Nawigacja */
+        header {
+            background-color: white;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+            position: fixed;
+            width: 100%;
+            top: 0;
+            z-index: 1000;
+        }
+
+        .container {
+            width: 90%;
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 20px;
+        }
+
+        nav {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 20px 0;
+        }
+
+        .logo {
+            font-size: 1.5rem;
+            font-weight: 700;
+            color: var(--primary);
+            text-decoration: none;
+            display: flex;
+            align-items: center;
+        }
+
+        .logo i {
+            margin-right: 10px;
+            color: var(--accent);
+        }
+
+        .nav-links {
+            display: flex;
+            list-style: none;
+        }
+
+        .nav-links li {
+            margin-left: 30px;
+        }
+
+        .nav-links a {
+            text-decoration: none;
+            color: var(--dark);
+            font-weight: 500;
+            position: relative;
+            transition: var(--transition);
+        }
+
+        .nav-links a:hover {
+            color: var(--accent);
+        }
+
+        .nav-links a::after {
+            content: '';
+            position: absolute;
+            bottom: -5px;
+            left: 0;
+            width: 0;
+            height: 2px;
+            background-color: var(--accent);
+            transition: var(--transition);
+        }
+
+        .nav-links a:hover::after {
+            width: 100%;
+        }
+
+        .hamburger {
+            display: none;
+            cursor: pointer;
+            background: none;
+            border: none;
+            font-size: 1.5rem;
+            color: var(--primary);
+        }
+
+        /* Sekcja Hero */
+        .hero {
+            background: linear-gradient(135deg, var(--primary) 0%, var(--secondary) 100%);
+            color: white;
+            padding: 150px 0 100px;
+            text-align: center;
+        }
+
+        .hero h1 {
+            font-size: 2.5rem;
+            margin-bottom: 20px;
+        }
+
+        .hero p {
+            font-size: 1.2rem;
+            max-width: 600px;
+            margin: 0 auto 30px;
+        }
+
+        .btn {
+            display: inline-block;
+            background-color: var(--accent);
+            color: white;
+            padding: 12px 30px;
+            border-radius: 30px;
+            text-decoration: none;
+            font-weight: 600;
+            transition: var(--transition);
+            border: none;
+            cursor: pointer;
+        }
+
+        .btn:hover {
+            background-color: #0095a8;
+            transform: translateY(-3px);
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+        }
+
+        .btn-outline {
+            background-color: transparent;
+            border: 2px solid white;
+            margin-left: 15px;
+        }
+
+        .btn-outline:hover {
+            background-color: white;
+            color: var(--primary);
+        }
+
+        /* Sekcje */
+        section {
+            padding: 80px 0;
+        }
+
+        section h2 {
+            text-align: center;
+            font-size: 2rem;
+            margin-bottom: 50px;
+            color: var(--primary);
+            position: relative;
+        }
+
+        section h2::after {
+            content: '';
+            position: absolute;
+            bottom: -15px;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 50px;
+            height: 3px;
+            background-color: var(--accent);
+        }
+
+        /* O nas */
+        .about-content {
+            display: flex;
+            align-items: center;
+            gap: 50px;
+        }
+
+        .about-image {
+            flex: 1;
+            text-align: center;
+        }
+
+        .about-image img {
+            width: 100%;
+            max-width: 450px;
+            border-radius: 10px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+        }
+
+        .about-text {
+            flex: 1;
+        }
+
+        .about-text h3 {
+            color: var(--secondary);
+            margin-bottom: 15px;
+        }
+
+        /* Oferta */
+        .services {
+            background-color: #f9f9f9;
+        }
+
+        .services-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 30px;
+        }
+
+        .service-card {
+            background-color: white;
+            border-radius: 10px;
+            padding: 30px;
+            text-align: center;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.05);
+            transition: var(--transition);
+        }
+
+        .service-card:hover {
+            transform: translateY(-10px);
+            box-shadow: 0 15px 30px rgba(0, 0, 0, 0.1);
+        }
+
+        .service-card i {
+            font-size: 2.5rem;
+            color: var(--accent);
+            margin-bottom: 20px;
+        }
+
+        .service-card h3 {
+            margin-bottom: 15px;
+            color: var(--primary);
+        }
+
+        /* Produkt DAD */
+        .product {
+            background: linear-gradient(135deg, #f5f7fa 0%, #e4e7eb 100%);
+        }
+
+        .product-content {
+            display: flex;
+            align-items: center;
+            gap: 50px;
+        }
+
+        .product-image {
+            flex: 1;
+            text-align: center;
+        }
+
+        .product-image img {
+            width: 100%;
+            max-width: 450px;
+            border-radius: 10px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+        }
+
+        .product-text {
+            flex: 1;
+        }
+
+        .product-text h3 {
+            color: var(--secondary);
+            margin-bottom: 15px;
+        }
+
+        .product-features {
+            margin: 20px 0;
+        }
+
+        .product-features li {
+            margin-bottom: 10px;
+            display: flex;
+            align-items: flex-start;
+        }
+
+        .product-features li i {
+            color: var(--accent);
+            margin-right: 10px;
+            margin-top: 5px;
+        }
+
+        /* Kontakt */
+        .contact-content {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 50px;
+        }
+
+        .contact-info {
+            margin-bottom: 30px;
+        }
+
+        .contact-info h3 {
+            color: var(--secondary);
+            margin-bottom: 15px;
+        }
+
+        .contact-info p {
+            margin-bottom: 10px;
+        }
+
+        .contact-info i {
+            color: var(--accent);
+            margin-right: 10px;
+            font-size: 1.2rem;
+        }
+
+        .contact-form {
+            background-color: white;
+            padding: 30px;
+            border-radius: 10px;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.05);
+        }
+
+        .form-group {
+            margin-bottom: 20px;
+        }
+
+        .form-group label {
+            display: block;
+            margin-bottom: 5px;
+            font-weight: 500;
+        }
+
+        .form-control {
+            width: 100%;
+            padding: 12px 15px;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+            font-size: 1rem;
+            transition: var(--transition);
+        }
+
+        .form-control:focus {
+            border-color: var(--accent);
+            outline: none;
+            box-shadow: 0 0 0 3px rgba(0, 178, 202, 0.1);
+        }
+
+        textarea.form-control {
+            resize: vertical;
+            min-height: 120px;
+        }
+
+        /* Stopka */
+        footer {
+            background-color: var(--dark);
+            color: white;
+            padding: 50px 0 20px;
+        }
+
+        .footer-content {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 40px;
+            margin-bottom: 40px;
+        }
+
+        .footer-column h3 {
+            color: var(--accent);
+            margin-bottom: 20px;
+            font-size: 1.2rem;
+        }
+
+        .footer-links {
+            list-style: none;
+        }
+
+        .footer-links li {
+            margin-bottom: 10px;
+        }
+
+        .footer-links a {
+            color: #ccc;
+            text-decoration: none;
+            transition: var(--transition);
+        }
+
+        .footer-links a:hover {
+            color: var(--accent);
+        }
+
+        .social-links {
+            display: flex;
+            gap: 15px;
+            margin-top: 15px;
+        }
+
+        .social-links a {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            background-color: rgba(255, 255, 255, 0.1);
+            color: white;
+            transition: var(--transition);
+        }
+
+        .social-links a:hover {
+            background-color: var(--accent);
+            transform: translateY(-3px);
+        }
+
+        .copyright {
+            text-align: center;
+            padding-top: 20px;
+            border-top: 1px solid rgba(255, 255, 255, 0.1);
+            font-size: 0.9rem;
+            color: #999;
+        }
+
+        /* Responsywność */
+        @media (max-width: 992px) {
+            .about-content,
+            .product-content {
+                flex-direction: column;
+            }
+
+            .about-image,
+            .product-image {
+                margin-bottom: 30px;
+            }
+        }
+
+        @media (max-width: 768px) {
+            .nav-links {
+                position: fixed;
+                top: 80px;
+                left: -100%;
+                width: 100%;
+                height: calc(100vh - 80px);
+                background-color: white;
+                flex-direction: column;
+                align-items: center;
+                padding-top: 50px;
+                transition: var(--transition);
+            }
+
+            .nav-links.active {
+                left: 0;
+            }
+
+            .nav-links li {
+                margin: 15px 0;
+            }
+
+            .hamburger {
+                display: block;
+            }
+
+            .hero h1 {
+                font-size: 2rem;
+            }
+
+            .hero p {
+                font-size: 1rem;
+            }
+
+            section {
+                padding: 60px 0;
+            }
+        }
+
+        @media (max-width: 576px) {
+            .btn {
+                display: block;
+                width: 100%;
+                margin-bottom: 15px;
+            }
+
+            .btn-outline {
+                margin-left: 0;
+            }
+
+            .hero {
+                padding: 120px 0 70px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Nawigacja -->
+    <header>
+        <div class="container">
+            <nav>
+                <a href="#" class="logo">
+                    <i class="fas fa-chart-line"></i>
+                    AppData Insight
+                </a>
+                <ul class="nav-links">
+                    <li><a href="#home">Home</a></li>
+                    <li><a href="#about">O nas</a></li>
+                    <li><a href="#services">Oferta</a></li>
+                    <li><a href="#product">Produkt DAD</a></li>
+                    <li><a href="#contact">Kontakt</a></li>
+                </ul>
+                <button class="hamburger">
+                    <i class="fas fa-bars"></i>
+                </button>
+            </nav>
+        </div>
+    </header>
+
+    <!-- Hero -->
+    <section class="hero" id="home">
+        <div class="container">
+            <h1>Twoje dane zasługują na lepszą kontrolę</h1>
+            <p>Dostarczamy narzędzia do monitoringu, analizy jakości i wykrywania anomalii w danych dla firm każdej wielkości.</p>
+            <a href="#services" class="btn">Nasza oferta</a>
+            <a href="#product" class="btn btn-outline">Odkryj DAD</a>
+        </div>
+    </section>
+
+    <!-- O nas -->
+    <section id="about">
+        <div class="container">
+            <h2>O nas</h2>
+            <div class="about-content">
+                <div class="about-image">
+                    <img src="AppDataInsight.png" alt="Zespół AppData Insight">
+                </div>
+                <div class="about-text">
+                    <h3>Zespół ekspertów od danych</h3>
+                    <p>AppData Insight to zespół doświadczonych specjalistów pracujących zdalnie z całego świata. Specjalizujemy się w analizie danych, ich monitoringu oraz wykrywaniu anomalii.</p>
+                    <p>Brak fizycznego biura nie jest dla nas przeszkodą - działamy jako zgrany team, który łączy pasja do danych i ich potencjału w biznesie. Naszą misją jest dostarczanie klientom narzędzi, które pozwalają w pełni wykorzystać potencjał danych.</p>
+                    <p>Dzięki naszemu doświadczeniu i innowacyjnemu podejściu, pomagamy firmom przekształcać surowe dane w wartościowe insighty biznesowe.</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Oferta -->
+    <section id="services" class="services">
+        <div class="container">
+            <h2>Nasza oferta</h2>
+            <div class="services-grid">
+                <div class="service-card">
+                    <i class="fas fa-search"></i>
+                    <h3>Audyty danych</h3>
+                    <p>Kompleksowa analiza jakości danych w Twojej organizacji z rekomendacjami usprawnień i identyfikacją problemów.</p>
+                </div>
+                <div class="service-card">
+                    <i class="fas fa-robot"></i>
+                    <h3>Automatyzacja raportów</h3>
+                    <p>Budowa zautomatyzowanych systemów raportowania, które oszczędzają czas i eliminują błędy ludzkie.</p>
+                </div>
+                <div class="service-card">
+                    <i class="fas fa-exclamation-triangle"></i>
+                    <h3>Wykrywanie anomalii</h3>
+                    <p>Zaawansowane systemy wykrywania nieprawidłowości w danych biznesowych w czasie rzeczywistym.</p>
+                </div>
+                <div class="service-card">
+                    <i class="fas fa-chart-pie"></i>
+                    <h3>Analizy predykcyjne</h3>
+                    <p>Wykorzystanie uczenia maszynowego do prognozowania trendów i przewidywania kluczowych wskaźników.</p>
+                </div>
+            </div>
+            <div style="text-align: center; margin-top: 40px;">
+                <a href="#contact" class="btn">Dowiedz się więcej</a>
+            </div>
+        </div>
+    </section>
+
+    <!-- Produkt DAD -->
+    <section id="product" class="product">
+        <div class="container">
+            <h2>Data Anomaly Detector (DAD)</h2>
+            <div class="product-content">
+                <div class="product-image">
+                    <img src="pobrane.png" alt="Data Anomaly Detector">
+                </div>
+                <div class="product-text">
+                    <h3>Zaawansowana technologia wykrywania anomalii</h3>
+                    <p>Data Anomaly Detector (DAD) to nasze flagowe rozwiązanie do automatycznego wykrywania nieprawidłowości w danych biznesowych. System wykorzystuje zaawansowane algorytmy uczenia maszynowego do identyfikacji wzorców odbiegających od normy.</p>
+                    
+                    <ul class="product-features">
+                        <li>
+                            <i class="fas fa-check-circle"></i>
+                            <span>Wykrywa anomalie w czasie rzeczywistym z ponad 99% skutecznością</span>
+                        </li>
+                        <li>
+                            <i class="fas fa-check-circle"></i>
+                            <span>Adaptuje się do specyfiki Twoich danych biznesowych</span>
+                        </li>
+                        <li>
+                            <i class="fas fa-check-circle"></i>
+                            <span>Automatycznie powiadamia o wykrytych anomaliach</span>
+                        </li>
+                        <li>
+                            <i class="fas fa-check-circle"></i>
+                            <span>Dostępny jako SaaS lub wdrożenie on-premise</span>
+                        </li>
+                        <li>
+                            <i class="fas fa-check-circle"></i>
+                            <span>Idealny dla firm z sektora finansowego, e-commerce, produkcji i logistyki</span>
+                        </li>
+                    </ul>
+                    
+                    <p>DAD sprawdza się idealnie w wykrywaniu oszustw finansowych, nieprawidłowości w łańcuchu dostaw, anomalii w zachowaniach użytkowników oraz zapobieganiu awariom sprzętowym.</p>
+                    
+                    <a href="#contact" class="btn">Zamów demo</a>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Kontakt -->
+    <section id="contact">
+        <div class="container">
+            <h2>Skontaktuj się z nami</h2>
+            <div class="contact-content">
+                <div>
+                    <div class="contact-info">
+                        <h3>Dane kontaktowe</h3>
+                        <p><i class="fas fa-envelope"></i> adrian@appdatainsight.pl</p>
+                        <p><i class="fas fa-phone"></i> +48 501 610 492</p>
+                        <p><i class="fas fa-globe"></i> Pracujemy zdalnie na całym świecie</p>
+                    </div>
+                    <div class="contact-info">
+                        <h3>Godziny pracy</h3>
+                        <p><i class="fas fa-clock"></i> Poniedziałek - Piątek: 8:00 - 17:00</p>
+                        <p><i class="fas fa-calendar"></i> Weekend: Tylko kontakt mailowy</p>
+                    </div>
+                </div>
+                
+                <div class="contact-form">
+                    <form id="contactForm">
+                        <div class="form-group">
+                            <label for="name">Imię i nazwisko</label>
+                            <input type="text" id="name" class="form-control" required>
+                        </div>
+                        <div class="form-group">
+                            <label for="email">Email</label>
+                            <input type="email" id="email" class="form-control" required>
+                        </div>
+                        <div class="form-group">
+                            <label for="subject">Temat</label>
+                            <input type="text" id="subject" class="form-control" required>
+                        </div>
+                        <div class="form-group">
+                            <label for="message">Wiadomość</label>
+                            <textarea id="message" class="form-control" required></textarea>
+                        </div>
+                        <button type="submit" class="btn">Wyślij wiadomość</button>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Stopka -->
+    <footer>
+        <div class="container">
+            <div class="footer-content">
+                <div class="footer-column">
+                    <h3>AppData Insight</h3>
+                    <p>Specjalizujemy się w analizie danych, ich monitoringu oraz wykrywaniu anomalii dla firm każdej wielkości.</p>
+                    <div class="social-links">
+                        <a href="#"><i class="fab fa-linkedin-in"></i></a>
+                        <a href="#"><i class="fab fa-github"></i></a>
+                        <a href="#"><i class="fab fa-twitter"></i></a>
+                    </div>
+                </div>
+                <div class="footer-column">
+                    <h3>Szybki dostęp</h3>
+                    <ul class="footer-links">
+                        <li><a href="#home">Home</a></li>
+                        <li><a href="#about">O nas</a></li>
+                        <li><a href="#services">Oferta</a></li>
+                        <li><a href="#product">Produkt DAD</a></li>
+                        <li><a href="#contact">Kontakt</a></li>
+                    </ul>
+                </div>
+                <div class="footer-column">
+                    <h3>Nasze usługi</h3>
+                    <ul class="footer-links">
+                        <li><a href="#services">Audyty danych</a></li>
+                        <li><a href="#services">Automatyzacja raportów</a></li>
+                        <li><a href="#services">Wykrywanie anomalii</a></li>
+                        <li><a href="#services">Analizy predykcyjne</a></li>
+                    </ul>
+                </div>
+            </div>
+            <div class="copyright">
+                &copy; 2025 AppData Insight. Wszelkie prawa zastrzeżone.
+            </div>
+        </div>
+    </footer>
+
+    <script>
+        // Menu mobilne
+        const hamburger = document.querySelector('.hamburger');
+        const navLinks = document.querySelector('.nav-links');
+
+        hamburger.addEventListener('click', () => {
+            navLinks.classList.toggle('active');
+            hamburger.innerHTML = navLinks.classList.contains('active') 
+                ? '<i class="fas fa-times"></i>' 
+                : '<i class="fas fa-bars"></i>';
+        });
+
+        // Zamknięcie menu po kliknięciu linku
+        document.querySelectorAll('.nav-links a').forEach(link => {
+            link.addEventListener('click', () => {
+                navLinks.classList.remove('active');
+                hamburger.innerHTML = '<i class="fas fa-bars"></i>';
+            });
+        });
+
+        // Płynne przewijanie do sekcji
+        document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+            anchor.addEventListener('click', function (e) {
+                e.preventDefault();
+                
+                const targetId = this.getAttribute('href');
+                if (targetId === '#') return;
+                
+                const targetElement = document.querySelector(targetId);
+                if (targetElement) {
+                    window.scrollTo({
+                        top: targetElement.offsetTop - 80,
+                        behavior: 'smooth'
+                    });
+                }
+            });
+        });
+
+        // Prosty walidator formularza
+        const contactForm = document.getElementById('contactForm');
+        if (contactForm) {
+            contactForm.addEventListener('submit', function(e) {
+                e.preventDefault();
+                
+                // Symulacja wysyłania
+                const submitBtn = this.querySelector('button[type="submit"]');
+                const originalText = submitBtn.textContent;
+                
+                submitBtn.textContent = 'Wysyłanie...';
+                submitBtn.disabled = true;
+                
+                setTimeout(() => {
+                    alert('Dziękujemy za wiadomość! Odpowiemy najszybciej jak to możliwe.');
+                    this.reset();
+                    submitBtn.textContent = originalText;
+                    submitBtn.disabled = false;
+                }, 1500);
+            });
+        }
+
+        // Efekt przezroczystości dla nawigacji przy przewijaniu
+        window.addEventListener('scroll', function() {
+            const header = document.querySelector('header');
+            if (window.scrollY > 50) {
+                header.style.backgroundColor = 'rgba(255, 255, 255, 0.95)';
+                header.style.boxShadow = '0 2px 10px rgba(0, 0, 0, 0.1)';
+            } else {
+                header.style.backgroundColor = 'white';
+                header.style.boxShadow = '0 2px 10px rgba(0, 0, 0, 0.1)';
+            }
+        });
+    </script>
+</body>
+</html>
